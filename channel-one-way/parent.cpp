@@ -13,7 +13,7 @@ constexpr uint kNumMessages = 10;
 // Put some delays between actions so it's easier to follow the output of
 // stdout. Also, since both processes share stdout, these delays prevent
 // interleaving.
-constexpr uint kMessageTimeoutMs = 500;
+constexpr uint kMessageTimeoutMs = 100;
 
 zx_status_t parent(zx_handle_t channel) {
     // Close the channel when we exit this scope.
@@ -45,6 +45,8 @@ zx_status_t parent(zx_handle_t channel) {
         }
 
         // Did the remote client process close the channel?
+        // Alternatively, in this case we could ignore the signal and attempt
+        // the zx_channel_write which would fail.
         if (signals & ZX_CHANNEL_PEER_CLOSED) {
             ERR("peer closed unexpectedly\n");
             return ZX_CHANNEL_PEER_CLOSED;
